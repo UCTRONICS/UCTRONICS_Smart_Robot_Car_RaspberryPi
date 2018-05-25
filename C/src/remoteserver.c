@@ -175,8 +175,8 @@ int main(int argc, char *argv[])
 			bzero(&buffer, BUFFER_SIZE);
 			while ((n = read(newsockfd, &buffer, BUFFER_SIZE)) > 0) 
 			{	
-					for(count = 0; count < n; count ++)
-					printf("buffer %d = %x\n",count, buffer[count]);
+					//for(count = 0; count < n; count ++)
+					//printf("buffer %d = %x\n",count, buffer[count]);
 			   if(buffer[0] == 's'){  //0x73
 				   baseSpeed = buffer[1];
 				   addLeftSpeed = buffer[2];
@@ -187,11 +187,11 @@ int main(int argc, char *argv[])
 		           speedVal_2 = 10000*((buffer[1]+buffer[3])/255.0);
 				   speedVal_4 = 10000*((buffer[1]+buffer[3])/255.0);
 				   
-				   printf("speedVal_1 = %d\n", speedVal_1);
+				  // printf("speedVal_1 = %d\n", speedVal_1);
 			   }else if(buffer[0] == 'c'){  //0x63
 				  getColour = (buffer[1]<<16)|(buffer[2]<<8)|buffer[3]; 
 				  getBrightness = buffer[4];
-				  printf("getColour = %x\n", getColour);
+				  //printf("getColour = %x\n", getColour);
 				  GRB_work(1, getColour, getBrightness);
 			   }
 			   else{
@@ -484,7 +484,8 @@ int IR_updateCarState(int command) {
 	 }
 	 if( command ==IR_track_stop){
 		carstate.trackenable = 0;
-		stop();printf("Motion: stop \n" );
+		stop();
+		 printf("Motion: stop \n" );
 	 }	
 return 0;	 
 }
@@ -703,10 +704,9 @@ void trackModeWork(){
 	mySoftPwmWrite4(speedVal_4);
 	
 	
-    num1 = GET_GPIO(leftSensor);//digitalRead(leftSensor);
-	printf("the num1 = %d\n",num1);
-	num2 = GET_GPIO(middleSensor);//digitalRead(middleSensor);
-    num3 = GET_GPIO(rightSensor);//digitalRead(rightSensor);
+    num1 = GET_GPIO(leftSensor);
+    num2 = GET_GPIO(middleSensor);
+    num3 = GET_GPIO(rightSensor);
     if ((num2 == 0) && (num1 == 0) && (num3 == 0)) {
 		stop(); continue;
     } else if ( (num1 == 0) && num3) { //go to right
@@ -777,21 +777,20 @@ void getIR(){
 	bits=0;
 	i = countLow();
 	for(j=0;j<IR_LIMITS;j++){  // buffer bytes LIMITS
-		for(i=0;i<8;i++){   // 8 bits
-			k = countLow();
-			if(k==0){
-				buf[j]>>=(8-i);
-				done=1;printf("  \n");
-				return;
-			}
-				buf[j]>>=1;
-				buf[j]+=((k>30) ? 0x80: 0);
-				++bits;
-		}	
-	}
-	done=1;//delay(100);
+	for(i=0;i<8;i++){   // 8 bits
+	  k = countLow();
+	  if(k==0){
+	   buf[j]>>=(8-i);
+	   done=1;printf("  \n");
+	   return;
+	  }
+	  buf[j]>>=1;
+	  buf[j]+=((k>30) ? 0x80: 0);
+	  ++bits;
+	}	
+    }
+  done=1;
 }
-
 void turn() {
   go_back();
   delay(turnTime);
@@ -811,17 +810,16 @@ void avoidance(void)
 	mySoftPwmWrite2(speedVal_2);
 	mySoftPwmWrite3(speedVal_3);
 	mySoftPwmWrite4(speedVal_4);
-		temp_min  = temp_max;
-			temp_value= temp_max;
-		  for(cnt = 0; cnt < 3; cnt ++ ){
-			temp = disMeasure();sleep(0.01);  
-			if(temp_max<temp)	temp_max = temp;
-		    if(temp_min>temp)	temp_min = temp;
-			temp_value += temp;
-		  }
-		 dis = (temp_value-temp_max-temp_min);
-		 temp_value = 0;temp_min = 0; temp_max = 0; temp_value = 0; temp = 0;
-	
+	temp_min  = temp_max;
+	temp_value= temp_max;
+	for(cnt = 0; cnt < 3; cnt ++ ){
+	   temp = disMeasure();sleep(0.01);  
+	   if(temp_max<temp)	temp_max = temp;
+	   if(temp_min>temp)	temp_min = temp;
+	   temp_value += temp;
+         }
+       dis = (temp_value-temp_max-temp_min);
+       temp_value = 0;temp_min = 0; temp_max = 0; temp_value = 0; temp = 0;
     if (dis <= 30 && dis > 0 ) {
       BEEP_INT();
       turn();
@@ -958,23 +956,23 @@ void mySoftPwmWrite3( int value)
 	now_time = get_pwm_timestamp();
 	time_stamp = now_time - previous_time;
 	if(time_stamp > 0 && time_stamp <= 5000 ){   //1/2T
-		if(time_stamp <= value ){
-			GPIO_SET = 1 << MOTOR_3_PWM;
-		}
-		 else{	 
-			GPIO_CLR = 1 << MOTOR_3_PWM;
-		 }
+	if(time_stamp <= value ){
+	  GPIO_SET = 1 << MOTOR_3_PWM;
+	}
+	else{	 
+	    GPIO_CLR = 1 << MOTOR_3_PWM;
+	}
 	}
 	if(time_stamp >5000 && time_stamp <= 2*5000 ){   //1T
-		if(time_stamp <= value ){
-			GPIO_SET = 1 << MOTOR_3_PWM;
-		}
-		 else{	 
-			GPIO_CLR = 1 << MOTOR_3_PWM;
-		 }
+	if(time_stamp <= value ){
+	GPIO_SET = 1 << MOTOR_3_PWM;
+	}
+        else{	 
+	  GPIO_CLR = 1 << MOTOR_3_PWM;
+	}
 	}
 	if(time_stamp > 2*5000){
-		flag3 = 0;
+	   flag3 = 0;
 	}
 }
 void mySoftPwmWrite4( int value)
@@ -985,84 +983,82 @@ void mySoftPwmWrite4( int value)
 	static  unsigned char flag4 = 0;
 	
 	if(!flag4){
-		flag4 = 1;
-		previous_time = get_pwm_timestamp();
+	flag4 = 1;
+	previous_time = get_pwm_timestamp();
 	}
 	now_time = get_pwm_timestamp();
 	time_stamp = now_time - previous_time;
 	if(time_stamp > 0 && time_stamp <= 5000 ){   //1/2T
-		if(time_stamp <= value ){
-			GPIO_SET = 1 << MOTOR_4_PWM;
-		}
-		 else{	 
-			GPIO_CLR = 1 << MOTOR_4_PWM;
-		 }
+	if(time_stamp <= value ){
+	GPIO_SET = 1 << MOTOR_4_PWM;
+	}
+	else{	 
+	GPIO_CLR = 1 << MOTOR_4_PWM;
+	}
 	}
 	if(time_stamp >5000 && time_stamp <= 2*5000 ){   //1T
-		if(time_stamp <= value ){
-			GPIO_SET = 1 << MOTOR_4_PWM;
-		}
-		 else{	 
-			GPIO_CLR = 1 << MOTOR_4_PWM;
-		 }
+	if(time_stamp <= value ){
+	  GPIO_SET = 1 << MOTOR_4_PWM;
+	}
+	else{	 
+	GPIO_CLR = 1 << MOTOR_4_PWM;
+	 }
 	}
 	if(time_stamp > 2*5000){
-		flag4 = 0;
+	   flag4 = 0;
 	}
 }
 
 void servoInit(void)
 {
-	pinMode(servo_1, OUTPUT);
-	digitalWrite(servo_1, 0);
-	pinMode(servo_2, OUTPUT);
-	digitalWrite(servo_2, 0);
+   pinMode(servo_1, OUTPUT);
+   digitalWrite(servo_1, 0);
+   pinMode(servo_2, OUTPUT);
+   digitalWrite(servo_2, 0);
 }
 
 void servoCtrl(int servoNum, int dutyCycle)
 {
-		digitalWrite(servoNum, 1);
-		delayMicroseconds(dutyCycle);
-		digitalWrite(servoNum, 0);
-		delayMicroseconds(25000 - dutyCycle);
+   digitalWrite(servoNum, 1);
+   delayMicroseconds(dutyCycle);
+   digitalWrite(servoNum, 0);
+   delayMicroseconds(25000 - dutyCycle);
 }
 
 	
 void GRB_work(unsigned int ledNum, unsigned long colour, int brightness ){
-	int i;
-	ledstring.channel[0].brightness = brightness; 
-	for(i = 0; i<ledNum; i++){
-		ledstring.channel[0].leds[i] = colour; 
-	}  	
-	ws2811_render(&ledstring) ;
+  int i;
+  ledstring.channel[0].brightness = brightness; 
+  for(i = 0; i<ledNum; i++){
+	ledstring.channel[0].leds[i] = colour; 
+   }  	
+   ws2811_render(&ledstring) ;
 
 }
 void irInit(){
-	pinMode(IRIN,INPUT);
-	pullUpDnControl(IRIN,PUD_UP);
-	// to detect falling edge
-	wiringPiISR(IRIN,INT_EDGE_FALLING,(void*)getIR);
-	done=0;
+  pinMode(IRIN,INPUT);
+  pullUpDnControl(IRIN,PUD_UP);
+   // to detect falling edge
+   wiringPiISR(IRIN,INT_EDGE_FALLING,(void*)getIR);
+   done=0;
 }
-void myPWMInit(){
-	// Set up gpi pointer for direct register access
-	
+void myPWMInit(){	
   // Switch GPIO 7..11 to output mode
     INP_GPIO(MOTOR_1_PWM); // must use INP_GPIO before we can use OUT_GPIO
     OUT_GPIO(MOTOR_1_PWM);
-	INP_GPIO(MOTOR_2_PWM); // must use INP_GPIO before we can use OUT_GPIO
+    INP_GPIO(MOTOR_2_PWM); // must use INP_GPIO before we can use OUT_GPIO
     OUT_GPIO(MOTOR_2_PWM);
-	INP_GPIO(MOTOR_3_PWM); // must use INP_GPIO before we can use OUT_GPIO
+    INP_GPIO(MOTOR_3_PWM); // must use INP_GPIO before we can use OUT_GPIO
     OUT_GPIO(MOTOR_3_PWM);
-	INP_GPIO(MOTOR_4_PWM); // must use INP_GPIO before we can use OUT_GPIO
+    INP_GPIO(MOTOR_4_PWM); // must use INP_GPIO before we can use OUT_GPIO
     OUT_GPIO(MOTOR_4_PWM);
 }
 void GRBInit(){
-	 ws2811_return_t ret;
-     matrix = malloc(sizeof(ws2811_led_t) * width * height);
-    if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
-    {
-        fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
-    }
+  ws2811_return_t ret;
+  matrix = malloc(sizeof(ws2811_led_t) * width * height);
+  if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
+   {
+       fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
+   }
 	
 }
