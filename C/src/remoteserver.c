@@ -239,7 +239,7 @@ void *fun1(void *arg){
 		stop();
 		}
 	}else disWarning = 0;   
-	if(!poweroffFlag)beepWarning();
+	if(!poweroffFlag) beepWarning();
   }
 }
 
@@ -266,7 +266,7 @@ int IRVal = 0;
 	mySoftPwmWrite2(speedVal_2);
 	mySoftPwmWrite3(speedVal_3);
 	mySoftPwmWrite4(speedVal_4);
-	getLedSta();
+	if(!poweroffFlag)  getLedSta();
 	}
 		
 }
