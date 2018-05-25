@@ -42,6 +42,7 @@ static unsigned char disWarning  = 0;
 unsigned char buf[IR_LIMITS];	// bytes buffer
 unsigned int bits;	// 32768 bits capable
 unsigned char done;
+int sockfd, newsockfd, portno, clilen;
 unsigned char client_Connected = 0;
 unsigned char count;
 
@@ -59,6 +60,9 @@ unsigned char count;
 #define WIDTH                 4
 #define HEIGHT                 4
 #define LED_COUNT               (WIDTH * HEIGHT)
+
+void  INThandler(int sig);
+
 int  mem_fd;
 void *gpio_map;
 // I/O access
@@ -110,11 +114,10 @@ unsigned long  grb_colour_table[] =
 */
 int main(int argc, char *argv[])
 {
-	int sockfd, newsockfd, portno, clilen;
 	char buffer[BUFFER_SIZE]; ;
     struct sockaddr_in serv_addr, cli_addr;
     int  n, pulsenum, count ;
-		
+	signal(SIGINT, INThandler);
 	/* Initialise GPIO */
 		if (ControllerInit() < 0) return -1;
 			setup_io();
@@ -1061,4 +1064,35 @@ void GRBInit(){
        fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
    }
 	
+}
+
+void exit_UCTRONICS_Robot_Car(void)
+{
+	int pulsenum;
+	client_Connected = 0;
+	close(sockfd); 
+	for(pulsenum = 0; pulsenum <10; pulsenum++){
+		servoCtrl(servo_1,1300);
+		servoCtrl(servo_2,1300);
+	}
+	 digitalWrite(BEEP, LOW);
+	 GRB_work(1, 0,0 );
+	
+}
+
+void  INThandler(int sig)
+{
+     char  c;
+     signal(sig, SIG_IGN);
+     printf("OUCH, did you hit Ctrl-C?\n"
+            "Do you really want to quit? [y/n] ");
+     c = getchar();
+     if (c == 'y' || c == 'Y'){
+	exit_UCTRONICS_Robot_Car();
+		exit(0);
+	 }
+          
+     else
+          signal(SIGINT, INThandler);
+     getchar(); // Get new line character
 }
