@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 			myPWMInit();
 			GRBInit();
 			pthread_t t1,t2;  
-			//步骤5：开启线程  
+			//creat two thread
 			pthread_create(&t1,NULL,fun1,NULL); 
 			pthread_create(&t2,NULL,fun2,NULL); 
 			for(pulsenum = 0; pulsenum <10; pulsenum++){
