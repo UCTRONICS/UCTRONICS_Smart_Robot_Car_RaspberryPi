@@ -576,13 +576,13 @@ return 0;
 }
 void ultraInit(void)    
 {    
-    pinMode(Echo, INPUT);  //设置端口为输入  
-    pinMode(Trig, OUTPUT);  //设置端口为输出  
+    pinMode(Echo, INPUT);   
+    pinMode(Trig, OUTPUT);  
 }    
     
 float disMeasure(void)    
 {    
-    struct timeval tv1;  //timeval是time.h中的预定义结构体 其中包含两个一个是秒，一个是微秒    
+    struct timeval tv1;    
     struct timeval tv2;    
     long start, stop;    
     float dis; 
@@ -592,29 +592,29 @@ float disMeasure(void)
     delayMicroseconds(2);    
     
     digitalWrite(Trig, HIGH);    
-    delayMicroseconds(10);      //发出超声波脉冲    
+    delayMicroseconds(10);        
     digitalWrite(Trig, LOW);    
      waitCount = 0;   
     while(!(digitalRead(Echo) == 1)){
 		if(++waitCount>=5000)
 			break;
 	    else sleep(0.001);}    
-    gettimeofday(&tv1, NULL);           //获取当前时间 开始接收到返回信号的时候   
+    gettimeofday(&tv1, NULL);            
      waitCount = 0;
     while(!(digitalRead(Echo) == 0)){
 		if(++waitCount>=5000)
 			break;
 	    else sleep(0.001);}      
-    gettimeofday(&tv2, NULL);           //获取当前时间  最后接收到返回信号的时候  
+    gettimeofday(&tv2, NULL);             
     /*  
     int gettimeofday(struct timeval *tv, struct timezone *tz);  
     The functions gettimeofday() and settimeofday() can get and set the time as well as a timezone.   
     The use of the timezone structure is obsolete; the tz argument should normally be specified as NULL.  
     */  
-    start = tv1.tv_sec * 1000000 + tv1.tv_usec;   //微秒级的时间    
+    start = tv1.tv_sec * 1000000 + tv1.tv_usec;       
     stop  = tv2.tv_sec * 1000000 + tv2.tv_usec;    
     
-    dis = (float)(stop - start) / 1000000 * 34000 / 2;  //计算时间差求出距离    
+    dis = (float)(stop - start) / 1000000 * 34000 / 2;   
     
     return dis;    
 }  
