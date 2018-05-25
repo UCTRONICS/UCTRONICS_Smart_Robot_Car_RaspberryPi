@@ -289,7 +289,7 @@ int updateCarMotion(void) {
 			strcpy(direction, "forward right");
 			go_forward_right();
 		} else {
-			strcpy(direction, "stopped");
+			strcpy(direction, "stop");
 			stop();
 		}
 	} else if (carstate.back && !carstate.forward) {
@@ -305,7 +305,7 @@ int updateCarMotion(void) {
 			strcpy(direction, "back right");
 			go_back_right();
 		} else {
-			strcpy(direction, "stopped");
+			strcpy(direction, "stop");
 			stop();
 		}
 	} else if (carstate.left && !carstate.right) {
@@ -352,7 +352,7 @@ int updateCarMotion(void) {
 
 		printf("angleB = %d\r\n",angleB);
 	}else {
-		strcpy(direction, "stopped");
+		strcpy(direction, "stop");
 		stop();
 	}
 	printf("Motion: %s \n", direction);
@@ -572,8 +572,10 @@ int updateCarState(char command) {
 					carstate.autoAvoid = 0;
 					break; 
 				case 19: /*turn off the robot car*/
-					system("sudo poweroff");
+					exit_UCTRONICS_Robot_Car();
 					printf("power off\n");
+					system("sudo poweroff");
+					
 					break; 
          }
 return 0;
