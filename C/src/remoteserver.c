@@ -39,6 +39,7 @@ static int speedVal_4 = 5000;
     
 struct motionstate carstate = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static unsigned char disWarning  = 0;
+static unsigned char poweroffFlag = 0;
 unsigned char buf[IR_LIMITS];	// bytes buffer
 unsigned int bits;	// 32768 bits capable
 unsigned char done;
@@ -238,7 +239,7 @@ void *fun1(void *arg){
 		stop();
 		}
 	}else disWarning = 0;   
-	beepWarning();
+	if(!poweroffFlag)beepWarning();
   }
 }
 
@@ -572,6 +573,7 @@ int updateCarState(char command) {
 					carstate.autoAvoid = 0;
 					break; 
 				case 19: /*turn off the robot car*/
+					poweroffFlag = 1;
 					exit_UCTRONICS_Robot_Car();
 					printf("power off\n");
 					system("sudo poweroff");
