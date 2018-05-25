@@ -1084,11 +1084,12 @@ void  INThandler(int sig)
 {
      char  c;
      signal(sig, SIG_IGN);
-     printf("You hit Ctrl-C?\n"
+     printf("You hit Ctrl-C\n"
             "Do you really want to quit? [y/n] ");
      c = getchar();
      if (c == 'y' || c == 'Y'){
 	exit_UCTRONICS_Robot_Car();
+      printf("Bye.\n");
 		exit(0);
 	 }
           
