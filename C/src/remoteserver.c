@@ -209,8 +209,8 @@ int main(int argc, char *argv[])
 			  stop();
 			  clearFlag();
 			if (n < 0) {
-                //printf("Connection exception!\n");
-				break;      
+                           printf("Connection exception!\n");
+		           //break;      
 			}		
 		}
 		client_Connected = 0;
