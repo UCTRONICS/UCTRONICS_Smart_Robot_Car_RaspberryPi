@@ -6,8 +6,8 @@
 
 
 
-#define servo_1 7
-#define servo_2 6
+#define servo_1 4 //7  //wiringPi 
+#define servo_2 25 //6
 
 #define IRIN  5 //25//5
 
@@ -63,8 +63,9 @@
  		
 #define BUFFER_SIZE 10
 
-#define beepFrequence 50
-#define  turnTime    450
+#define halfPWMPeriod   5000  //5ms
+
+#define  turnTime        500000    //500ms
 
 struct motionstate {
         unsigned int left:1;
@@ -96,6 +97,7 @@ void beepInit(void);
 void ledInit(void);
 void servoInit(void);
 void servoCtrl(int servoNum, int dutyCycle);
+void servoAControl( int value);
 
 void getLedSta();
 unsigned char countLow(void);
@@ -108,6 +110,7 @@ void BEEP_INT (void);
 void BEEP_OPEN (void);
 void delayns(int n);
 void GRB_Set(unsigned char gdat,unsigned char rdat,unsigned char bdat);
+void GRB_MultiColour_work(unsigned int ledNum,  int brightness );
 void setup_io();
 
 void *fun1(void *arg);
