@@ -7,6 +7,7 @@
   - Open the RobotCarKit app and choose K0073. Then connect your Robot car through the ip address.
   
 ## Detail operations
+   if you want to know the detail operations, please see the following user guide:
 
 ## Hardware requirements
 
