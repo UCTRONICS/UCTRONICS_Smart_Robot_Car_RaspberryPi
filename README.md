@@ -104,10 +104,6 @@ sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh stop
  sudo reboot 
 ```
 
-## Hardware requirements
-
-## Library requirements
-
 ## Video demo
 
 
