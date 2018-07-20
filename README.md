@@ -9,6 +9,10 @@
   
 ## Detail operations
    if you want to know the detail operations, please see the following user guide:
+  ### Note: 
+  Before you start this user guide, make sure your network connection is working.
+  If you use our SD card with our UCTRONICS Smart Robot Car firmware, you can skip some steps and directly go to step 5.
+
 ### Note: 
 * Before you start this user guide, make sure your network connection is working.
 * If you use our SD card with our UCTRONICS Smart Robot Car firmware, you can skip some steps and directly go to step 5. 
