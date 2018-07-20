@@ -15,12 +15,12 @@
 * If you use our SD card with our UCTRONICS Smart Robot Car firmware, you can skip some steps and directly go to step 5. 
 ### Step1: Download the project
 - Enter the following command in the terminal to down the project:
-```
+```Bash
  sudo git clone https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi.git
 ```
 ### Step2: Install the necessary libraries
 - Enter the following command in the terminal.
-```
+```Bash
  sudo apt-get update
  sudo apt-get install subversion
  sudo apt-get install libjpeg8-dev
