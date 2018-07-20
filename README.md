@@ -29,11 +29,80 @@
  sudo apt-get install cmake
 ```
 ### Step3: Install Mjpeg Streamer
-### Step4: Add bcm2835-v4l2 module
-### Step5: Compile the source code 
-### Step6: Start and run the demo
-### Step7: Add automatic start support 
+- Enter the following command in the terminal.
+```Bash
+ cd UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer-experimental
+ sudo make all
+ sudo make install
+```
 
+### Step4: Add bcm2835-v4l2 module
+- Enter the following command in the terminal.
+ ```Bash
+ sudo nano /etc/modules
+ ```
+- Go to the end of the file and edit it so that it looks like the following:
+```Bash
+bcm2835-v4l2
+```
+- Save and restart the raspberry pie once configured.The camera is then tested to see if it works properly
+```Bash
+sudo reboot
+```
+```Bash
+ls /dev/video0
+```
+- If you can see the video0 device, congratulations, you have prepared successfully.
+
+### Step5: Compile the source code 
+- Enter the following command in the terminal.
+ ```Bash
+ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
+ sudo make
+ ```
+### Step6: Start and run the demo
+- Enter the following command in the terminal to start the camera.
+```Bash
+ sudo chmod +x ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh
+ sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
+```
+- After the camera start successfully, open your browser and test it by inputting
+  http://[your raspberry pi ip address]:8080/stream.html 
+ [Notice: you can check your raspberry pi ip address by sudo ifconfig ]
+- If anything is normal, you will see the video streaming on your browser like the following:
+
+- Enter the following command in the terminal to start the UCTRONICS Smart Robot Car
+```Bash
+ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
+ sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
+```
+- Now, open the “RobotCarKit” app and connect the robot with a control port: 2001 and video display port: 8080. After connect successfully, you can control your robot car by the app
+- If you want to exit the UCTRONICS Smart Robot Car project,just click ‘Ctrl+C’, then click ‘y’ or ‘Y’.
+- If you want to stop the camera from working, just enter the following command in the terminal
+```Bash
+sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh stop
+```
+
+
+### Step7: Add automatic start support 
+- Enter the following command in the terminal
+```Bash
+ sudo nano /etc/rc.local
+```
+- Add the following command between “fi” and “exit 0” 
+```Bash
+ # Start the camera
+ sudo chmod +x /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh
+ sudo /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
+ # Compile and start the robot car
+ cd /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
+ sudo make
+ sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
+```
+- Then click ‘Ctrl’ + ‘X’ ,and then ‘Y’, Click ‘Enter’ to save the file. Now restart your raspberry pi 
+```Bash
+ sudo reboot 
+```
 
 ## Hardware requirements
 
