@@ -16,7 +16,17 @@
 ### Note: 
 * Before you start this user guide, make sure your network connection is working.
 * If you use our SD card with our UCTRONICS Smart Robot Car firmware, you can skip some steps and directly go to step 5. 
-
+### Step1: Download the project
+- Enter the following command in the terminal to down the project:
+```
+sudo git clone https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi.git
+```
+### Step2: Install the necessary libraries
+### Step3: Install Mjpeg Streamer
+### Step4: Add bcm2835-v4l2 module
+### Step5: Compile the source code 
+### Step6: Start and run the demo
+### Step7: Add automatic start support 
 
 
 ## Hardware requirements
