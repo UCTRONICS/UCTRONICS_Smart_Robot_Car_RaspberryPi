@@ -82,6 +82,7 @@ struct motionstate {
 		unsigned int trackdisable:1;
 		unsigned int beepenable:1;
 		unsigned int autoAvoid:1;
+		unsigned int stop :1;
         }; 
 		
 

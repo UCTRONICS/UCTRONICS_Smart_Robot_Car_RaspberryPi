@@ -1,5 +1,4 @@
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -37,9 +36,12 @@ static int speedVal_2 = 5000;
 static int speedVal_3 = 5000;
 static int speedVal_4 = 5000;
 
-struct motionstate carstate = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+struct motionstate carstate = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static unsigned char disWarning  = 0;
 static unsigned char poweroffFlag = 0;
+static unsigned char turnLeftFlag = 0;
+static unsigned char turnBackFlag = 0;
+static unsigned char servoBeep = 0;
 unsigned char buf[IR_LIMITS];  // bytes buffer
 unsigned int bits;  // 32768 bits capable
 unsigned char done;
@@ -246,9 +248,17 @@ void *fun1(void *arg) {
 
       }
     } else disWarning = 0;
+
     if (!poweroffFlag) {
       beepWarning();
     }
+	if(servoBeep){
+		servoBeep = 0;
+		digitalWrite(BEEP, HIGH);
+		delay(100);
+		digitalWrite(BEEP, LOW);
+	}
+	
 
   }
 }
@@ -268,7 +278,6 @@ void *fun2(void *arg) {
       done = 0;
       IRVal = buf[2]; IRVal = IRVal << 8;
       IRVal = IRVal | buf[3];
-      //printf("IRVal= %x",IRVal);
       IR_updateCarState(IRVal);
       IR_updateCarMotion();
       IRVal = 0;
@@ -277,7 +286,6 @@ void *fun2(void *arg) {
     mySoftPwmWrite2(speedVal_2);
     mySoftPwmWrite3(speedVal_3);
     mySoftPwmWrite4(speedVal_4);
-	//servoAControl(1500);
     if (!poweroffFlag)  getLedSta();
   }
 
@@ -305,7 +313,8 @@ int updateCarMotion(void) {
       strcpy(direction, "stop");
       stop();
     }
-  } else if (carstate.back && !carstate.forward) {
+  } 
+  else if (carstate.back && !carstate.forward) {
     if ((!carstate.left && !carstate.right) ||
         (carstate.left && carstate.right)) {
       strcpy(direction, "back");
@@ -327,47 +336,56 @@ int updateCarMotion(void) {
   } else if (carstate.right && !carstate.left) {
     strcpy(direction, "right");
     go_right();
-  } else if (carstate.servoLeft) {
+  } else if( carstate. stop){
+	  carstate. stop = 0;
+	  stop();
+  }
+  if (carstate.servoLeft) {
     carstate.servoLeft = 0;
     strcpy(direction, "servo_left");
     if (angleA < 2300)
-      angleA = angleA + 30;
-    else
+      angleA = angleA + 50;
+    else{
       angleA = 2300;
-    servoCtrl(servo_1,  angleA);
+	   servoBeep =1;
+      //BEEP_OPEN();
+	}
+	servoCtrl(servo_1,  angleA);
     printf("angleA = %d\r\n", angleA);
-  } else if (carstate.servoRight) {
+  } 
+  if (carstate.servoRight) {
     carstate.servoRight = 0;
     strcpy(direction, "servo_right");
     if (angleA > 300)
-      angleA = angleA - 30;
-    else
-      angleA = 300;
-    servoCtrl(servo_1,  angleA);
+      angleA = angleA - 50;
+    else{  
+	angleA = 300;servoBeep =1;	
+	}
+   servoCtrl(servo_1,  angleA);
     printf("angleA = %d\r\n", angleA);
-  } else if (carstate.servoUp) {
+  } 
+  if (carstate.servoUp) {
     carstate.servoUp = 0;
     strcpy(direction, "servo_UP");
     if (angleB > 300)
-      angleB = angleB - 30;
-    else
-      angleB = 300;
-    servoCtrl(servo_2,  angleB);
+      angleB = angleB - 50;
+    else{
+		 angleB = 300;servoBeep =1; 	
+	}
+	servoCtrl(servo_2,  angleB);
+     
     printf("angleB = %d\r\n", angleB);
   } else if (carstate.servoDown) {
     carstate.servoDown = 0;
     strcpy(direction, "servo_down");
     if (angleB < 1250)
-      angleB = angleB + 30;
-    else
-      angleB = 1250;
-    servoCtrl(servo_2,  angleB);
-
+      angleB = angleB + 50;
+    else{
+		 angleB = 1250;servoBeep =1;
+	}
+      servoCtrl(servo_2,  angleB);
     printf("angleB = %d\r\n", angleB);
-  } else {
-    strcpy(direction, "stop");
-    stop();
-  }
+  } 
   printf("Motion: %s \n", direction);
   return 0;
 }
@@ -375,6 +393,7 @@ void  clearFlag(void) {
   carstate.left = 0;
   carstate.forward = 0;
   carstate.right = 0;
+  carstate. stop = 0;
   carstate. back = 0;
   carstate.servoLeft = 0;
   carstate. servoRight = 0;
@@ -545,6 +564,7 @@ int updateCarState(char command) {
       carstate.back = 0;
       carstate.trackenable = 0;
       carstate.autoAvoid = 0;
+	  carstate. stop = 1;
       break;
     case 6: /* stop right */
       carstate.right = 0;
@@ -735,7 +755,6 @@ void trackModeWork() {
     num2 = GET_GPIO(middleSensor);
     num3 = GET_GPIO(rightSensor);
     if ((num2 == 0) && (num1 == 0) && (num3 == 0)) {
-		//GRB_work(3, 0, 0 ) ;
       stop(); continue;
     } else if ( (num1 == 0) && num3) { //go to right
 			GRB_work(3, grb_colour_table[0], 100 ) ;
@@ -837,13 +856,13 @@ void turn() {
   now_time = get_pwm_timestamp();
   time_stamp = now_time - previous_time;
   if (time_stamp > 0 && time_stamp <= turnTime ) { //1/2T
-    go_back();
+    go_back();turnBackFlag = 1;
   }
   if (time_stamp > turnTime && time_stamp <= 2 * turnTime ) { //1T
-    go_left();
+    go_left();turnLeftFlag = 1;
   }
   if (time_stamp > 2 * turnTime) {
-    stop(); flag = 0;
+    stop(); flag = 0;turnLeftFlag = 0;turnBackFlag = 0;
   }
 }
 
@@ -859,7 +878,7 @@ void avoidance(void)
     mySoftPwmWrite2(speedVal_2);
     mySoftPwmWrite3(speedVal_3);
     mySoftPwmWrite4(speedVal_4);
-    if (disWarning ) {
+    if (disWarning || turnLeftFlag||turnBackFlag) {
       turn();
     } else {
       printf("Go forward\n");
