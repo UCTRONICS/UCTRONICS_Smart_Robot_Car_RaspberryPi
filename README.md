@@ -24,7 +24,7 @@ $ sudo reboot
 ```
 ## Detail configuration
 If you use the official raspbian system instead of our Smart_Robot_Car_K0073.img firmware, You should refer to the detail configuration steps
-
+  https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/C/Software%20User%20Guide.md
 
 ## Installation video demo 
 
