@@ -23,7 +23,7 @@ $ sudo ./ap_Config.sh
 $ sudo reboot
 ```
 ## Detail configuration
-If you use the official raspbian system instead of our Smart_RobotCar_K0073 firmware, You should refer to the detail configuration steps
+If you use the official raspbian system instead of our Smart_Robot_Car_K0073.img firmware, You should refer to the detail configuration steps
 
 
 ## Installation video demo 
