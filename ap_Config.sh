@@ -9,4 +9,5 @@ sudo cp wifiConfig/hostapd /etc/default/hostapd
 sudo systemctl start hostapd
 sudo systemctl start dnsmasq
 echo "AP mode configure OK,please run 'sudo reboot' to reboot"
+sudo reboot
 
