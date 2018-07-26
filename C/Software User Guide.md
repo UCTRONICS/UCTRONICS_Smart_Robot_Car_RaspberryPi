@@ -58,7 +58,7 @@ sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
 
 - After the camera start successfully, open your browser and test it by inputting
  http://[your raspberry pi ip address]:8080/stream.html 
-[Notice: you can check your raspberry pi ip address by sudo ifconfig ]
+[Notice: you can check your raspberry pi ip address by running 'sudo ifconfig' ]
 ![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/5.png)
 
 - If anything is normal, you will see the video streaming on your browser like the following:
