@@ -58,34 +58,36 @@ sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
 
 - After the camera start successfully, open your browser and test it by inputting
  http://[your raspberry pi ip address]:8080/stream.html 
-[Notice: you can check your raspberry pi ip address by sudo ifconfig ](pic)
-- If anything is normal, you will see the video streaming on your browser like the following:
+[Notice: you can check your raspberry pi ip address by sudo ifconfig ]
 ![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/5.png)
+
+- If anything is normal, you will see the video streaming on your browser like the following:
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/6.png)
 
 - Enter the following command in the terminal to start the UCTRONICS Smart Robot Car
 ```Bash
 cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
 sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
 ```
-![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/6.png)
-- Now, open the “RobotCarKit” app and connect the robot with a control port: 2001 and video display port: 8080. After connect successfully, you can control your robot car by the app
 ![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/7.png)
+- Now, open the “RobotCarKit” app and connect the robot with a control port: 2001 and video display port: 8080. After connect successfully, you can control your robot car by the app
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/8.png)
 
 - If you want to exit the UCTRONICS Smart Robot Car project,just click ‘Ctrl+C’, then click ‘y’ or ‘Y’.
-![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/8.png)
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/9.png)
 
 - If you want to stop the camera from working, just enter the following command in the terminal
 ```Bash
 sudo ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh stop
 ```
-![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/9.png)
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/10.png)
 
 ## 7. Add automatic start support 
 - Enter the following command in the terminal
 ```Bash
 sudo nano /etc/rc.local
 ```
-![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/10.png)
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/11.png)
 
 - Add the following command between “fi” and “exit 0” 
 ```Bash
@@ -97,7 +99,7 @@ cd /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
 sudo make
 sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
 ```
-![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/11.png)
+![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/12.png)
 
 - Then click ‘Ctrl’ + ‘X’ ,and then ‘Y’, Click ‘Enter’ to save the file. Now restart your raspberry pi
 ```Bash
