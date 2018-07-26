@@ -11,14 +11,12 @@ We advise users use the AP mode to control the robot car. Our firmware’s defau
 - For STA mode ,enter the following command in the terminal
 ```Bash
 $ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/
-$ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/
 $ sudo chmod +x sta_Config.sh
 $ sudo ./sta_Config.sh
 $ sudo reboot
 ```
 - For AP mode ,enter the following command in the terminal
 ```Bash
-$ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/
 $ cd ~/UCTRONICS_Smart_Robot_Car_RaspberryPi/
 $ sudo chmod +x ap_Config.sh
 $ sudo ./ap_Config.sh
