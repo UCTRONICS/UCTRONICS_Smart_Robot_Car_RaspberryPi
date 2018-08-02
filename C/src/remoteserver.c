@@ -36,6 +36,7 @@ static int speedVal_2 = 5000;
 static int speedVal_3 = 5000;
 static int speedVal_4 = 5000;
 
+
 struct motionstate carstate = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static unsigned char disWarning  = 0;
 static unsigned char poweroffFlag = 0;
@@ -110,7 +111,13 @@ unsigned long  grb_colour_table[] =
   0x00FFFF,  //pink
   0xFFFFFF,  // white
   //0x000000,
-
+};
+unsigned long  receive_colour_table[4] =
+{
+  0xFF0000,  // green
+  0x00FF00,  // red
+  0x0000FF,  // blue
+  0xFFFF00,  //yellow
 };
 
 /* Creates a server socket and listens for a command from the remote.
@@ -121,6 +128,11 @@ int main(int argc, char *argv[])
   char buffer[BUFFER_SIZE]; ;
   struct sockaddr_in serv_addr, cli_addr;
   int  n, pulsenum, count ;
+  static unsigned long previous_time = 0;
+  static unsigned long now_time = 0;
+  static unsigned long time_stamp = 0;
+  static int getColIndex = 0;
+  static  unsigned char readNowTime = 1;
   signal(SIGINT, INThandler);
   /* Initialise GPIO */
   if (ControllerInit() < 0) return -1;
@@ -199,6 +211,23 @@ int main(int argc, char *argv[])
         getColour = (buffer[1] << 16) | (buffer[2] << 8) | buffer[3];
         getBrightness = buffer[4];
         GRB_work(3, getColour, getBrightness);
+		if(readNowTime){
+			readNowTime = 0;
+			previous_time = get_pwm_timestamp();	
+		}	
+	  now_time = get_pwm_timestamp();
+      time_stamp = now_time - previous_time;
+      if (time_stamp <2000000) {
+		   printf("set current direction\r\n");
+		  receive_colour_table[getColIndex] = getColour;
+      }else{
+		  readNowTime = 1;
+		  printf("set next direction\r\n");
+		  getColIndex = (1+getColIndex)%4;
+		  receive_colour_table[getColIndex] = getColour;
+		  previous_time = get_pwm_timestamp();
+	  }  
+		
       } else if (buffer[0] == 'v') {
         printf("Reveive value %d\n", buffer[0]);
         n = write(newsockfd, "{\"version\":2}", 13);
@@ -530,27 +559,27 @@ int updateCarState(char command) {
   switch (command) {
     case 0: /* left */
       carstate.left = 1;
-      GRB_work(3, grb_colour_table[2], 100);
+      GRB_work(3, receive_colour_table[2], getBrightness);
       break;
     case 1: /* up */
       if (!disWarning) {
         carstate.forward = 1;
-        GRB_work(3, grb_colour_table[0], 100);
+        GRB_work(3, receive_colour_table[0], getBrightness);
       }
-      else
-        carstate.forward = 0;
-      carstate.trackenable = 0;
-      carstate.autoAvoid = 0;
+    else
+      carstate.forward = 0;
+	  carstate.trackenable = 0;
+	  carstate.autoAvoid = 0;
       break;
     case 2: /* right */
       carstate.right = 1;
-      GRB_work(3, grb_colour_table[3], 100);
+      GRB_work(3, receive_colour_table[3], getBrightness);
       carstate.trackenable = 0;
       carstate.autoAvoid = 0;
       break;
     case 3: /* down */
       carstate.back = 1;
-      GRB_work(3, grb_colour_table[1], 100);
+      GRB_work(3, receive_colour_table[1], getBrightness);
       carstate.trackenable = 0;
       carstate.autoAvoid = 0;
       break;
