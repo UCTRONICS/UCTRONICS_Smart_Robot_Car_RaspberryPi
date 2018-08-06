@@ -96,6 +96,7 @@ sudo chmod +x /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh
 sudo /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
 # Compile and start the robot car
 cd /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
+sudo make clean
 sudo make
 sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
 ```
