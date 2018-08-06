@@ -324,7 +324,7 @@ void *fun2(void *arg) {
 
 int updateCarMotion(void) {
   static int angleA = 1140;
-  static int angleB = 630;
+  static int angleB = 1140;
 
   char direction[16];
   if (carstate.forward && !carstate.back) {
@@ -372,11 +372,10 @@ int updateCarMotion(void) {
   if (carstate.servoLeft) {
     carstate.servoLeft = 0;
     strcpy(direction, "servo_left");
-    if (angleA < 2300)
+    if (angleA < 2000)
       angleA = angleA + 50;
     else{
-      angleA = 2300;
-	   servoBeep =1;
+      angleA = 2000;servoBeep =1;
       //BEEP_OPEN();
 	}
 	servoCtrl(servo_1,  angleA);
@@ -385,10 +384,10 @@ int updateCarMotion(void) {
   if (carstate.servoRight) {
     carstate.servoRight = 0;
     strcpy(direction, "servo_right");
-    if (angleA > 300)
+    if (angleA > 600)
       angleA = angleA - 50;
     else{  
-	angleA = 300;servoBeep =1;	
+	angleA = 600;servoBeep =1;	
 	}
    servoCtrl(servo_1,  angleA);
     printf("angleA = %d\r\n", angleA);
@@ -396,10 +395,10 @@ int updateCarMotion(void) {
   if (carstate.servoUp) {
     carstate.servoUp = 0;
     strcpy(direction, "servo_UP");
-    if (angleB > 300)
+    if (angleB > 600)
       angleB = angleB - 50;
     else{
-		 angleB = 300;servoBeep =1; 	
+		 angleB = 600;servoBeep =1; 	
 	}
 	servoCtrl(servo_2,  angleB);
      
@@ -407,10 +406,10 @@ int updateCarMotion(void) {
   } else if (carstate.servoDown) {
     carstate.servoDown = 0;
     strcpy(direction, "servo_down");
-    if (angleB < 1250)
+    if (angleB < 2000)
       angleB = angleB + 50;
     else{
-		 angleB = 1250;servoBeep =1;
+		 angleB = 2000;servoBeep =1;
 	}
       servoCtrl(servo_2,  angleB);
     printf("angleB = %d\r\n", angleB);
