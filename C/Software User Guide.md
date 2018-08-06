@@ -91,14 +91,18 @@ sudo nano /etc/rc.local
 
 - Add the following command between “fi” and “exit 0” 
 ```Bash
+if [ -c "/dev/video0" ]; then
 # Start the camera
 sudo chmod +x /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh
 sudo /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/mjpg-streamer.sh start
+fi
+
 # Compile and start the robot car
 cd /home/pi/UCTRONICS_Smart_Robot_Car_RaspberryPi/C/
 sudo make clean
-sudo make
+sudo make 
 sudo ./UCTRONICS_Smart_Robot_Car_RaspberryPi
+
 ```
 ![Alt text](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/12.png)
 
