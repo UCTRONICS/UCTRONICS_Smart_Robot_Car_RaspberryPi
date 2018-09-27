@@ -120,13 +120,20 @@ unsigned long  receive_colour_table[4] =
   0xFFFF00,  //yellow
 };
 
+
+
+
+int PhaseScratchCmd(char command);
+
+
 /* Creates a server socket and listens for a command from the remote.
 */
 int main(int argc, char *argv[])
 {
   usleep(10);
-  char buffer[BUFFER_SIZE]; ;
+  char buffer[BUFFER_SIZE]; 
   struct sockaddr_in serv_addr, cli_addr;
+    struct sigaction sa;
   int  n, pulsenum, count ;
   static unsigned long previous_time = 0;
   static unsigned long now_time = 0;
@@ -169,6 +176,9 @@ int main(int argc, char *argv[])
     perror("ERROR on binding");
     exit(1);
   }
+    /* Add support reconnection */
+  sa.sa_handler = SIG_IGN;
+  sigaction( SIGPIPE, &sa, 0 );
   /* Now start listening for the clients, here process will
     go in sleep mode and will wait for the incoming connection
   */
@@ -230,13 +240,22 @@ int main(int argc, char *argv[])
 		
       } else if (buffer[0] == 'v') {
         printf("Reveive value %d\n", buffer[0]);
-        n = write(newsockfd, "{\"version\":2}", 13);
+        write(newsockfd, "{\"version\":2}", 13);
       }
       else {
-        for (count = 0; count < n; count ++) {
-          updateCarState(buffer[count]);
-          updateCarMotion();
-        }
+	  	for(count = 0; count <n; count ++){
+			printf("receive data %d\r\n",buffer[count]);
+		}
+	  	if(buffer[0]==0xFF && buffer[1] == 0x55){
+				for (count = 2; count < n; count ++) {
+					 PhaseScratchCmd(buffer[count]);
+					}
+		}else{
+			for (count = 0; count < n; count ++) {
+					  updateCarState(buffer[count]);
+					  updateCarMotion();
+					}
+		}
       }
       bzero(&buffer, BUFFER_SIZE);
     }
@@ -325,7 +344,6 @@ void *fun2(void *arg) {
 int updateCarMotion(void) {
   static int angleA = 1140;
   static int angleB = 1140;
-
   char direction[16];
   if (carstate.forward && !carstate.back) {
     if ((!carstate.left && !carstate.right) ||
@@ -369,6 +387,8 @@ int updateCarMotion(void) {
 	  carstate. stop = 0;
 	  stop();
   }
+
+  
   if (carstate.servoLeft) {
     carstate.servoLeft = 0;
     strcpy(direction, "servo_left");
@@ -552,6 +572,106 @@ int IR_updateCarState(int command) {
   }
   return 0;
 }
+
+
+int PhaseScratchCmd(char command){
+	static int angleA = 1140;
+	static int angleB = 630;
+
+	switch (command) {
+    case 1: // go forward
+      go_forward();
+      GRB_work(3, receive_colour_table[2], getBrightness);
+      break;
+    case 2: //go backward
+      if (!disWarning) {
+       	go_back();
+        GRB_work(3, receive_colour_table[0], getBrightness);
+      }
+    else
+		stop();
+	  carstate.trackenable = 0;
+	  carstate.autoAvoid = 0;
+      break;
+    case 3: //go left
+      go_left();
+      GRB_work(3, receive_colour_table[3], getBrightness);
+      carstate.trackenable = 0;
+      carstate.autoAvoid = 0;
+      break;
+    case 4: //go right
+      go_right();
+      GRB_work(3, receive_colour_table[1], getBrightness);
+      carstate.trackenable = 0;
+      carstate.autoAvoid = 0;
+      break;
+    case 5: //stop
+      stop();
+      carstate.trackenable = 0;
+      carstate.autoAvoid = 0;
+      break;
+    case 7: /* servo left */
+       if (angleA < 2300)
+      	angleA = angleA + 50;
+   	   else
+      	 angleA = 2300;
+       servoCtrl(servo_1,  angleA);
+     break;
+    case 8: /*servo right */
+      if (angleA > 300)
+      angleA = angleA - 50;
+     else
+      angleA = 300;
+     servoCtrl(servo_1,  angleA);
+     break;
+    case 9: /* servo up */
+      if (angleB > 300)
+      	angleB = angleB - 50;
+      else
+      	angleB = 300;
+      servoCtrl(servo_2,  angleB);
+    break;
+    case 10: /* servo down */
+     if (angleB < 1160)
+      	angleB = angleB + 50;
+     else
+      angleB = 1160;
+     servoCtrl(servo_2,  angleB);
+    break;
+    case 11: /* enable track */
+      carstate.trackenable = 1;
+      break;
+    case 12: /* disable track */
+      carstate.trackenable = 0;
+      break;
+    case 13: 
+      carstate.speedUp = 1;
+      break;
+    case 14: 
+      carstate.speedDown = 1;
+      break;
+    case 15: /* disable track */
+      digitalWrite(BEEP, HIGH);
+      break;
+    case 16: /* disable track */
+      digitalWrite(BEEP, LOW);
+      break;
+    case 17: /*automatic avoidance*/
+      carstate.autoAvoid = 1;
+      break;
+    case 18: /*stop automatic avoidance*/
+      carstate.autoAvoid = 0;
+      break;
+    case 19: /*turn off the robot car*/
+      poweroffFlag = 1;
+      exit_UCTRONICS_Robot_Car();
+      printf("power off\n");
+      system("sudo poweroff");
+      break;
+  }
+  return 0;
+}
+
 /* Updates the struct MotionState of the car.
 */
 int updateCarState(char command) {
@@ -590,6 +710,8 @@ int updateCarState(char command) {
     case 5: /* stop*/
       carstate.forward = 0;
       carstate.back = 0;
+	  carstate.left = 0;
+	  carstate.right = 0;
       carstate.trackenable = 0;
       carstate.autoAvoid = 0;
 	  carstate. stop = 1;
