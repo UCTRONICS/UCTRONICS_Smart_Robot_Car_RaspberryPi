@@ -26,8 +26,12 @@ $ sudo reboot
 If you use the official raspbian system instead of our Smart_Robot_Car_K0073.img firmware, You should refer to the detail configuration steps
   https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/C/Software%20User%20Guide.md
 
-## Installation video demo 
-
-## Operation video demo
+## Graphical programming
+- Connect the Smart Robot Car's wifi whose name is ‘UCTRONICS’ and password is '12345678'. 
+ ![EasyBehavior](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/Connect_wifi.gif) 
+- Open the UCBlock and connect the Robor Car with IP address: 192.168.1.1 and port 2001.
+![EasyBehavior](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/connect_to_car.gif) 
+- You can program for the Robot Car through the block easily.
+![EasyBehavior](https://github.com/UCTRONICS/UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/image/enjoy.gif) 
 
 
