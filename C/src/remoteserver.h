@@ -1,3 +1,12 @@
+/********************For Pi 3 ModeB/B+************************/
+#define BCM2708_PERI_BASE        0x3f000000  //Base address
+
+/*******************For Pi zero w******************/
+//#define BCM2708_PERI_BASE        0x20000000  //Base address
+
+#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+
+
 
 #define Trig   25 //5// 25    
 #define Echo    4    
@@ -18,27 +27,48 @@
 
 #define IR_LIMITS  64  // bytes buffer = IR_LIMITS x8 bits
 
+/*******************For old IR controller*****************/
 #define IR_up    0x46b9
 #define IR_down  0x15ea
 #define IR_Left  0x44bb
 #define IR_right 0x43bc
 #define IR_stop  0x40bf
 
-#define IR_speed_up      0x16e9
-#define IR_speed_down    0x19e6
-
-#define IR_servo_up      0x0cf3
-#define IR_servo_down    0x18e7
-
-#define IR_servo_left    0x08f7
-#define IR_servo_right   0x1ce3
-
-#define IR_track         0x42bd
-#define IR_track_stop    0x4ab5
+/******************For new IR controller****************************/
+#define IR_up_v2   	 0x18E7        //up
+#define IR_down_v2  	 0x52AD        //down
+#define IR_Left_v2  	 0x08F7        //left
+#define IR_right_v2 	 0x5AA5        //right
+#define IR_stop_v2  	 0x1CE3        //stop
 
 
-#define BCM2708_PERI_BASE        0x3f000000  //基地址
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+#if 1
+	#define IR_speed_up      0x16e9
+	#define IR_speed_down    0x19e6
+
+	#define IR_servo_up      0x0cf3
+	#define IR_servo_down    0x18e7
+
+	#define IR_servo_left    0x08f7
+	#define IR_servo_right   0x1ce3
+
+	#define IR_track         0x42bd
+	#define IR_track_stop    0x4ab5
+
+#else
+	#define IR_speed_up      0x45ba		//1
+	#define IR_speed_down    0x46b9		//2
+
+	#define IR_servo_up      0x47B8		//3
+	#define IR_servo_down    0x44bb		//4
+
+	#define IR_servo_left    0x40bf		//5
+	#define IR_servo_right   0x43bc		//6
+
+	#define IR_track         0x07f8		//7
+	#define IR_track_stop    0x15ea		//8
+
+#endif
 
 
 // GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)

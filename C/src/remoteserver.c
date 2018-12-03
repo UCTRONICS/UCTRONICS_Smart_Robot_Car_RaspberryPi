@@ -522,22 +522,22 @@ int IR_updateCarMotion(void) {
 
 int IR_updateCarState(int command) {
 
-  if ( command == IR_up) {
+  if ( command == IR_up || command == IR_up_v2) {
     if (!disWarning)
       carstate.forward = 1;
     else
       carstate.forward = 0;
   }
-  if ( command == IR_down) {
+  if ( command == IR_down || command == IR_down_v2) {
     carstate.back = 1;
   }
-  if ( command == IR_Left) {
+  if ( command == IR_Left || command == IR_Left_v2) {
     carstate.left = 1;
   }
-  if ( command == IR_right) {
+  if ( command == IR_right || command == IR_right_v2) {
     carstate.right = 1;
   }
-  if ( command == IR_stop) {
+  if ( command == IR_stop || command == IR_stop_v2) {
     carstate.forward = 0;
     carstate.back = 0;
     carstate.right = 0;
