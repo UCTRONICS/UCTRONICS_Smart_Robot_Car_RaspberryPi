@@ -26,6 +26,6 @@ run:	$(NAME)
 .PHONY:	clean
 
 clean:	
-	rm $(NAME) $(ODIR)/*.o
+	rm -f $(NAME) $(ODIR)/*.o
 
 
