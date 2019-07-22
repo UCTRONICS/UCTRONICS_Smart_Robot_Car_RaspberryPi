@@ -11,6 +11,10 @@ wget https://project-downloads.drogon.net/wiringpi-latest.deb
 ```bash
 sudo dpkg -i wiringpi-latest.deb
 ```
+
+## Some issues to do:
+- For Pi4B platform, the driver of ws2812B module exist some problems. 
+
 ## Quick start
 - Step 1: Insert the SD card with Smart_Robot_Car_K0073 firmware to the RPI.
 - Step 2: Power on and wait for the system to start normally. The colored lights on the board will flash alternately.
