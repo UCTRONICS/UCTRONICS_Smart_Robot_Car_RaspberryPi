@@ -1,5 +1,16 @@
 # UCTRONICS_Smart_Robot_Car_RaspberryPi
-
+## Add support for Pi4 B
+- Just a quick post to let you know that you’ll need a new wiringPi for the Raspberry Pi 4B.
+- To upgrade:
+```bash
+cd /tmp
+```
+```bash
+wget https://project-downloads.drogon.net/wiringpi-latest.deb
+```
+```bash
+sudo dpkg -i wiringpi-latest.deb
+```
 ## Quick start
 - Step 1: Insert the SD card with Smart_Robot_Car_K0073 firmware to the RPI.
 - Step 2: Power on and wait for the system to start normally. The colored lights on the board will flash alternately.
