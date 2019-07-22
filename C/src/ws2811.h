@@ -39,8 +39,8 @@ extern "C" {
 #include "rpihw.h"
 #include "pwm.h"
 
-
 #define WS2811_TARGET_FREQ                       850000   // Can go as low as 400000
+
 
 // 4 color R, G, B and W ordering
 #define SK6812_STRIP_RGBW                        0x18100800
