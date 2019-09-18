@@ -17,10 +17,9 @@ sudo dpkg -i wiringpi-latest.deb
 /*******************For Pi zero w******************/
 //#define BCM2708_PERI_BASE        0x20000000  //Base address
 /********************For Pi 3 ModeB/B+************************/
-#define BCM2708_PERI_BASE        0x3f000000  //Base address
+//#define BCM2708_PERI_BASE        0x3f000000  //Base address
 /********************For Pi 4 B************************/
-//#define BCM2708_PERI_BASE        0xFE000000  //Base address
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+#define BCM2708_PERI_BASE        0xFE000000  //Base address
 ```
 ## Some issues to do:
 - For Pi4B platform, the driver of ws2812B module exist some problems. 
