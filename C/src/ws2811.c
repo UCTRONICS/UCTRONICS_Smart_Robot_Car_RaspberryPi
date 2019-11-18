@@ -55,8 +55,6 @@
 
 #define BUS_TO_PHYS(x)                           ((x)&~0xC0000000)
 
-#define OSC_FREQ                                 19200000   // crystal frequency
-
 /* 4 colors (R, G, B + W), 8 bits per byte, 3 symbols per bit + 55uS low for reset signal */
 #define LED_COLOURS                              4
 #define LED_RESET_uS                             55
@@ -346,6 +344,7 @@ static int setup_pwm(ws2811_t *ws2811)
     int maxcount = device->max_count;
     uint32_t freq = ws2811->freq;
     int32_t byte_count;
+    int32_t OSC_FREQ = ws2811->rpi_hw->osc_freq;
 
     stop_pwm(ws2811);
 
@@ -412,58 +411,58 @@ static int setup_pwm(ws2811_t *ws2811)
  */
 static int setup_pcm(ws2811_t *ws2811)
 {
-    ws2811_device_t *device = ws2811->device;
-    volatile dma_t *dma = device->dma;
-    volatile dma_cb_t *dma_cb = device->dma_cb;
-    volatile pcm_t *pcm = device->pcm;
-    volatile cm_clk_t *cm_clk = device->cm_clk;
-    //int maxcount = max_channel_led_count(ws2811);
-    int maxcount = device->max_count;
-    uint32_t freq = ws2811->freq;
-    int32_t byte_count;
-
-    stop_pcm(ws2811);
-
-    // Setup the PCM Clock - Use OSC @ 19.2Mhz w/ 3 clocks/tick
-    cm_clk->div = CM_CLK_DIV_PASSWD | CM_CLK_DIV_DIVI(OSC_FREQ / (3 * freq));
-    cm_clk->ctl = CM_CLK_CTL_PASSWD | CM_CLK_CTL_SRC_OSC;
-    cm_clk->ctl = CM_CLK_CTL_PASSWD | CM_CLK_CTL_SRC_OSC | CM_CLK_CTL_ENAB;
-    usleep(10);
-    while (!(cm_clk->ctl & CM_CLK_CTL_BUSY))
-        ;
-
-    // Setup the PCM, use delays as the block is rumored to lock up without them.  Make
-    // sure to use a high enough priority to avoid any FIFO underruns, especially if
-    // the CPU is busy doing lots of memory accesses, or another DMA controller is
-    // busy.  The FIFO will clock out data at a much slower rate (2.6Mhz max), so
-    // the odds of a DMA priority boost are extremely low.
-
-    pcm->cs = RPI_PCM_CS_EN;            // Enable PCM hardware
-    pcm->mode = (RPI_PCM_MODE_FLEN(31) | RPI_PCM_MODE_FSLEN(1));
-                // Framelength 32, clock enabled, frame sync pulse
-    pcm->txc = RPI_PCM_TXC_CH1WEX | RPI_PCM_TXC_CH1EN | RPI_PCM_TXC_CH1POS(0) | RPI_PCM_TXC_CH1WID(8);
-               // Single 32-bit channel
-    pcm->cs |= RPI_PCM_CS_TXCLR;        // Reset transmit fifo
-    usleep(10);
-    pcm->cs |= RPI_PCM_CS_DMAEN;         // Enable DMA DREQ
-    pcm->dreq = (RPI_PCM_DREQ_TX(0x3F) | RPI_PCM_DREQ_TX_PANIC(0x10)); // Set FIFO tresholds
-
-    // Initialize the DMA control block
-    byte_count = PCM_BYTE_COUNT(maxcount, freq);
-    dma_cb->ti = RPI_DMA_TI_NO_WIDE_BURSTS |  // 32-bit transfers
-                 RPI_DMA_TI_WAIT_RESP |       // wait for write complete
-                 RPI_DMA_TI_DEST_DREQ |       // user peripheral flow control
-                 RPI_DMA_TI_PERMAP(2) |       // PCM TX peripheral
-                 RPI_DMA_TI_SRC_INC;          // Increment src addr
-
-    dma_cb->source_ad = addr_to_bus(device, device->pxl_raw);
-    dma_cb->dest_ad = (uint32_t)&((pcm_t *)PCM_PERIPH_PHYS)->fifo;
-    dma_cb->txfr_len = byte_count;
-    dma_cb->stride = 0;
-    dma_cb->nextconbk = 0;
-
-    dma->cs = 0;
-    dma->txfr_len = 0;
+//    ws2811_device_t *device = ws2811->device;
+//    volatile dma_t *dma = device->dma;
+//    volatile dma_cb_t *dma_cb = device->dma_cb;
+//    volatile pcm_t *pcm = device->pcm;
+//    volatile cm_clk_t *cm_clk = device->cm_clk;
+//    //int maxcount = max_channel_led_count(ws2811);
+//    int maxcount = device->max_count;
+//    uint32_t freq = ws2811->freq;
+//    int32_t byte_count;
+//
+//    stop_pcm(ws2811);
+//
+//    // Setup the PCM Clock - Use OSC @ 19.2Mhz w/ 3 clocks/tick
+//    cm_clk->div = CM_CLK_DIV_PASSWD | CM_CLK_DIV_DIVI(OSC_FREQ / (3 * freq));
+//    cm_clk->ctl = CM_CLK_CTL_PASSWD | CM_CLK_CTL_SRC_OSC;
+//    cm_clk->ctl = CM_CLK_CTL_PASSWD | CM_CLK_CTL_SRC_OSC | CM_CLK_CTL_ENAB;
+//    usleep(10);
+//    while (!(cm_clk->ctl & CM_CLK_CTL_BUSY))
+//        ;
+//
+//    // Setup the PCM, use delays as the block is rumored to lock up without them.  Make
+//    // sure to use a high enough priority to avoid any FIFO underruns, especially if
+//    // the CPU is busy doing lots of memory accesses, or another DMA controller is
+//    // busy.  The FIFO will clock out data at a much slower rate (2.6Mhz max), so
+//    // the odds of a DMA priority boost are extremely low.
+//
+//    pcm->cs = RPI_PCM_CS_EN;            // Enable PCM hardware
+//    pcm->mode = (RPI_PCM_MODE_FLEN(31) | RPI_PCM_MODE_FSLEN(1));
+//                // Framelength 32, clock enabled, frame sync pulse
+//    pcm->txc = RPI_PCM_TXC_CH1WEX | RPI_PCM_TXC_CH1EN | RPI_PCM_TXC_CH1POS(0) | RPI_PCM_TXC_CH1WID(8);
+//               // Single 32-bit channel
+//    pcm->cs |= RPI_PCM_CS_TXCLR;        // Reset transmit fifo
+//    usleep(10);
+//    pcm->cs |= RPI_PCM_CS_DMAEN;         // Enable DMA DREQ
+//    pcm->dreq = (RPI_PCM_DREQ_TX(0x3F) | RPI_PCM_DREQ_TX_PANIC(0x10)); // Set FIFO tresholds
+//
+//    // Initialize the DMA control block
+//    byte_count = PCM_BYTE_COUNT(maxcount, freq);
+//    dma_cb->ti = RPI_DMA_TI_NO_WIDE_BURSTS |  // 32-bit transfers
+//                 RPI_DMA_TI_WAIT_RESP |       // wait for write complete
+//                 RPI_DMA_TI_DEST_DREQ |       // user peripheral flow control
+//                 RPI_DMA_TI_PERMAP(2) |       // PCM TX peripheral
+//                 RPI_DMA_TI_SRC_INC;          // Increment src addr
+//
+//    dma_cb->source_ad = addr_to_bus(device, device->pxl_raw);
+//    dma_cb->dest_ad = (uint32_t)&((pcm_t *)PCM_PERIPH_PHYS)->fifo;
+//    dma_cb->txfr_len = byte_count;
+//    dma_cb->stride = 0;
+//    dma_cb->nextconbk = 0;
+//
+//    dma->cs = 0;
+//    dma->txfr_len = 0;
 
     return 0;
 }
@@ -911,11 +910,6 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
         device->mbox.size = PWM_BYTE_COUNT(device->max_count, ws2811->freq) +
                             sizeof(dma_cb_t);
         break;
-
-    case PCM:
-        device->mbox.size = PCM_BYTE_COUNT(device->max_count, ws2811->freq) +
-                            sizeof(dma_cb_t);
-        break;
     }
     // Round up to page size multiple
     device->mbox.size = (device->mbox.size + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1);
@@ -1001,10 +995,6 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
     case PWM:
        pwm_raw_init(ws2811);
        break;
-
-    case PCM:
-       pcm_raw_init(ws2811);
-       break;
     }
 
     memset((dma_cb_t *)device->dma_cb, 0, sizeof(dma_cb_t));
@@ -1035,15 +1025,6 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
             unmap_registers(ws2811);
             ws2811_cleanup(ws2811);
             return WS2811_ERROR_PWM_SETUP;
-        }
-        break;
-    case PCM:
-    // Setup the PCM, clock, and DMA
-        if (setup_pcm(ws2811))
-        {
-            unmap_registers(ws2811);
-            ws2811_cleanup(ws2811);
-            return WS2811_ERROR_PCM_SETUP;
         }
         break;
     }

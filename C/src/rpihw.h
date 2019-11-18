@@ -42,8 +42,12 @@ typedef struct {
     uint32_t hwver;
     uint32_t periph_base;
     uint32_t videocore_base;
+    uint32_t osc_freq;
     char *desc;
 } rpi_hw_t;
+
+
+
 
 
 const rpi_hw_t *rpi_hw_detect(void);

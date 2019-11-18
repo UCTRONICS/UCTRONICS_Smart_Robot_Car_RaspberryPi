@@ -25,7 +25,6 @@
 #include "gpio.h"
 #include "dma.h"
 #include "pwm.h"
-
 #include "ws2811.h"
 
 int baseSpeed, addLeftSpeed, addRightSpeed;
@@ -75,6 +74,9 @@ int width = WIDTH;
 int height = HEIGHT;
 int led_count = LED_COUNT;
 int clear_on_exit = 0;
+
+const rpi_hw_t *my_rpi_hw;
+
 ws2811_t ledstring =
 {
   .freq = TARGET_FREQ,
@@ -86,7 +88,7 @@ ws2811_t ledstring =
       .gpionum = GPIO_PIN,
       .count = LED_COUNT,
       .invert = 0,
-      .brightness = 255,
+      .brightness = 100,
       .strip_type = STRIP_TYPE,
     },
     [1] =
@@ -135,6 +137,7 @@ int main(int argc, char *argv[])
   struct sockaddr_in serv_addr, cli_addr;
     struct sigaction sa;
   int  n, pulsenum, count ;
+  int on = 1;
   static unsigned long previous_time = 0;
   static unsigned long now_time = 0;
   static unsigned long time_stamp = 0;
@@ -171,11 +174,18 @@ int main(int argc, char *argv[])
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(portno);
 
-  /* Now bind the host address using bind() call.*/
-  if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-    perror("ERROR on binding");
-    exit(1);
-  }
+  /*Add support port reuse*/
+    if ((setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) < 0)
+    {
+      perror("setsockopt failed");
+      exit(EXIT_FAILURE);
+    }
+    /* Now bind the host address using bind() call.*/
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+      perror("ERROR on binding");
+      exit(1);
+    }
+ 
     /* Add support reconnection */
   sa.sa_handler = SIG_IGN;
   sigaction( SIGPIPE, &sa, 0 );
@@ -1049,6 +1059,8 @@ void BEEP_OPEN (void) {
 // Set up a memory regions to access GPIO
 void setup_io()
 {
+ my_rpi_hw = rpi_hw_detect();
+
   /* open /dev/mem */
   if ((mem_fd = open("/dev/mem", O_RDWR | O_SYNC) ) < 0) {
     printf("can't open /dev/mem \n");
@@ -1061,7 +1073,7 @@ void setup_io()
                PROT_READ | PROT_WRITE, // Enable reading & writting to mapped memory
                MAP_SHARED,       //Shared with other processes
                mem_fd,           //File to map
-               GPIO_BASE         //Offset to GPIO peripheral
+               my_rpi_hw->periph_base + 0x200000//GPIO_BASE         //Offset to GPIO peripheral
              );
 
   close(mem_fd); //No need to keep mem_fd open after mmap

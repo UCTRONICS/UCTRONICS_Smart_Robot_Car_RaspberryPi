@@ -11,19 +11,6 @@ wget https://project-downloads.drogon.net/wiringpi-latest.deb
 ```bash
 sudo dpkg -i wiringpi-latest.deb
 ```
-- Open the remoteserver.h file which is under UCTRONICS_Smart_Robot_Car_RaspberryPi/blob/master/C/src/ path.
-- Enable "#define BCM2708_PERI_BASE        0xFE000000" and disable others
-```bash
-/*******************For Pi zero w******************/
-//#define BCM2708_PERI_BASE        0x20000000  //Base address
-/********************For Pi 3 ModeB/B+************************/
-//#define BCM2708_PERI_BASE        0x3f000000  //Base address
-/********************For Pi 4 B************************/
-#define BCM2708_PERI_BASE        0xFE000000  //Base address
-```
-## Some issues to do:
-- For Pi4B platform, the driver of ws2812B module exist some problems. 
-
 ## Quick start
 - Step 1: Insert the SD card with Smart_Robot_Car_K0073 firmware to the RPI.
 - Step 2: Power on and wait for the system to start normally. The colored lights on the board will flash alternately.

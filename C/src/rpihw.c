@@ -50,6 +50,12 @@
 #define VIDEOCORE_BASE_RPI4                      0xc0000000
 
 
+
+#define OSC_FREQ_Pi3 19200000
+#define OSC_FREQ_Pi4 54000000
+
+
+
 #define RPI_MANUFACTURER_MASK                    (0xf << 16)
 #define RPI_WARRANTY_MASK                        (0x3 << 24)
 
@@ -296,13 +302,17 @@ static const rpi_hw_t rpi_hw_info[] = {
         .type = RPI_HWVER_TYPE_PI2,
         .periph_base = PERIPH_BASE_RPI2,
         .videocore_base = VIDEOCORE_BASE_RPI2,
+        .osc_freq = OSC_FREQ_Pi3,
         .desc = "Pi 3 B+",
+        
+        
     },
     {
         .hwver  = 0xa02082,
         .type = RPI_HWVER_TYPE_PI2,
         .periph_base = PERIPH_BASE_RPI2,
         .videocore_base = VIDEOCORE_BASE_RPI2,
+        .osc_freq = OSC_FREQ_Pi3,
         .desc = "Pi 3",
     },
     {
@@ -310,6 +320,7 @@ static const rpi_hw_t rpi_hw_info[] = {
         .type = RPI_HWVER_TYPE_PI2,
         .periph_base = PERIPH_BASE_RPI2,
         .videocore_base = VIDEOCORE_BASE_RPI2,
+        .osc_freq = OSC_FREQ_Pi3,
         .desc = "Pi 3",
     },
     //
@@ -320,6 +331,7 @@ static const rpi_hw_t rpi_hw_info[] = {
         .type = RPI_HWVER_TYPE_PI2,
         .periph_base = PERIPH_BASE_RPI2,
         .videocore_base = VIDEOCORE_BASE_RPI2,
+        .osc_freq = OSC_FREQ_Pi3,
         .desc = "Compute Module 3/L3",
     },
 
@@ -329,6 +341,7 @@ static const rpi_hw_t rpi_hw_info[] = {
         .type = RPI_HWVER_TYPE_PI4,
         .periph_base = PERIPH_BASE_RPI4,
         .videocore_base = VIDEOCORE_BASE_RPI4,
+        .osc_freq = OSC_FREQ_Pi4,
         .desc = "Pi 4",
     },
     //Pi 4B
@@ -337,6 +350,7 @@ static const rpi_hw_t rpi_hw_info[] = {
         .type = RPI_HWVER_TYPE_PI4,
         .periph_base = PERIPH_BASE_RPI4,
         .videocore_base = VIDEOCORE_BASE_RPI4,
+        .osc_freq = OSC_FREQ_Pi4,
         .desc = "Pi 4",
     },
 
