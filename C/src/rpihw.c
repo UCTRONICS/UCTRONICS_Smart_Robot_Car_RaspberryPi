@@ -346,6 +346,18 @@ static const rpi_hw_t rpi_hw_info[] = {
     },
     //Pi 4B
     {
+        .hwver  = 0xB03112,
+        .type = RPI_HWVER_TYPE_PI4,
+        .periph_base = PERIPH_BASE_RPI4,
+        .videocore_base = VIDEOCORE_BASE_RPI4,
+        .osc_freq = OSC_FREQ_Pi4,
+        .desc = "Pi 4",
+    },
+    
+
+
+    //Pi 4B
+    {
         .hwver  = 0xC03111,
         .type = RPI_HWVER_TYPE_PI4,
         .periph_base = PERIPH_BASE_RPI4,
