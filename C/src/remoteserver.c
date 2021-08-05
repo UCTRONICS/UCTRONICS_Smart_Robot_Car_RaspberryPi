@@ -883,11 +883,11 @@ void beepWarning() {
     now_time = get_pwm_timestamp();
     time_stamp = now_time - previous_time;
     if (time_stamp > 0 && time_stamp <= 50000 ) { //1/2T
-      digitalWrite(BEEP, HIGH);
+      //digitalWrite(BEEP, HIGH);
       GRB_work(3, 0, 0);
     }
     if (time_stamp > 50000 && time_stamp <= 2 * 50000 ) { //1T
-      digitalWrite(BEEP, LOW);
+      //digitalWrite(BEEP, LOW);
       GRB_work(3, getColour, getBrightness);
     }
     if (time_stamp > 2 * 50000) {
@@ -895,7 +895,7 @@ void beepWarning() {
     }
   } else if (canStopBeep) {
     canStopBeep = 0;
-    digitalWrite(BEEP, LOW);
+    //digitalWrite(BEEP, LOW);
     GRB_work(3, getColour, getBrightness);
   }
 }
